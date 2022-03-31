@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.github.ogomezso.kafka.test.config.KafkaConfig;
-import org.github.ogomezso.kafka.test.objects.Record;
+import org.github.ogomezso.kafka.test.objects.PlainRecord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class KafkaTestPlainProducer<K, V> {
     }
 
 
-    public List<ProducerRecord<K, V>> produceMessages(String topicName, List<Record<K, V>> messages) {
+    public List<ProducerRecord<K, V>> produceMessages(String topicName, List<PlainRecord<K, V>> messages) {
         List<ProducerRecord<K, V>> recordsProduced = new ArrayList<>();
         messages.forEach(
                 message -> {
