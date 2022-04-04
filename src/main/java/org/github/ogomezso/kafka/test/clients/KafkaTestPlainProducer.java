@@ -20,21 +20,23 @@ public abstract class KafkaTestPlainProducer<K, V> {
     }
 
 
+    public abstract List<ProducerRecord<K, V>> processResult(List<ProducerRecord<K, V>> records);
+
+    public abstract void handleError(Exception e, ProducerRecord<K, V> record);
+
     public List<ProducerRecord<K, V>> produceMessages(String topicName, List<TestRecord<K, V>> messages) {
         List<ProducerRecord<K, V>> recordsProduced = new ArrayList<>();
-        messages.forEach(
-                message -> {
-                    ProducerRecord<K, V> msg = null;
-                    try {
-                        msg = sendMessage(topicName, message.getKey(), message.getValue());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    recordsProduced.add(msg);
-                }
-        );
+        messages.forEach(message -> {
+            ProducerRecord<K, V> msg = null;
+            try {
+                msg = sendMessage(topicName, message.getKey(), message.getValue());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            recordsProduced.add(msg);
+        });
         plainProducer.flush();
-        List<ProducerRecord<K,V>> processedRecords = processResult(recordsProduced);
+        List<ProducerRecord<K, V>> processedRecords = processResult(recordsProduced);
         plainProducer.close();
         return processedRecords;
     }
@@ -50,8 +52,4 @@ public abstract class KafkaTestPlainProducer<K, V> {
         });
         return record;
     }
-
-    public abstract List<ProducerRecord<K,V>> processResult(List<ProducerRecord<K,V>> records);
-
-    public abstract void handleError(Exception e, ProducerRecord<K, V> record);
 }

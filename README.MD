@@ -81,7 +81,7 @@ KafkaTestAdminClient adminClient = new KafkaTestAdminClient(kafkaConfig);
 
 #### Topic Creation
 
-``createTopics()`` create a list of topics from `TestTopicConfig` object.
+``createTopics()`` creates a list of topics from `TestTopicConfig` object.
 
 Example of a single topic creation:
 
@@ -100,7 +100,7 @@ adminClient.createTopics(Collections.singletonList(topicConfig));
 
 ### Describe Topic
 
-This method retrieve a list of `TopicDescription` kafka objects containing all the topic information from a list
+`describeTopics` retrieves a list of `TopicDescription` kafka objects containing all the topic information from a list
 of `TestTopicConfig` object.
 
 ```
@@ -131,15 +131,30 @@ topicDescriptionList.forEach(description -> {
 });
 ```
 
+### Delete Topics
+
+`deleteTopics()` delete a given list of `topics` passed as List of String arguments.
+
+```
+adminClient.deleteTopics(Collections.singletonList(topicConfig.getTopicName()));
+```
+
 ### KafkaTestPlainProducer
 
 This client wraps `KafkaProducer` class; provide a parametrized instance that **must match with the serializers configured on KafkaConfig class**.
 
 Implements `produceMessages` method that:
 - Accepts a list of `TestRecord` objects parametrized as _simple java types_ and `topic name string` as parameter.
-- Returns a list `ProducerRecord` class with the same types of the message
-- Resolve the Kafka Future writing a trace in logs in case of succeed or exception stack trace on System Error on fail.
-- Do the flush and the producer close after producing the whole list
+- Do the flush and the producer close after producing the whole list.
+- Provide abstract methods to customize the process and error handling of the producer:
+- `processResult`: takes the list of `ProducerRecords<K,V>` returned by kafka client's `send` method as parameter and return a list of `ProducerRecords<K,V>`. Use this method for the post-production process you need to implement.
+- `handleError`: takes and Exception and the list of `ProducerRecords<K,V>` returned by kafka client's `send` method as parameters. Use this method for error handling during the message production.
+- 
+**Note:**
+
+**`processResult` method will be executed between flush and close of the `KafkaProducer`**
+
+**`handleError` method will be execute in case of exception on `KafkaProducer` send method.**
 
 Examples:
 
@@ -184,6 +199,7 @@ This client wraps `KafkaConsumer` class; provide a parametrized instance that **
 
 Implements `pollOrTimeout` method that:
 - Accepts a list of `String` with the names of the topics to suscribe
+- Provide a abstract method `processRecords` that take as parameter and returns a list of `ConsumerRecord<K,V>`. **This method will be executed on the resolution of the poll** 
 - Timeout duration of the poll. After this time consumer will be closed with the already consumed records as return value
 - The number of records you want to consume. After consuming this number of records the consumer will be closed with the already consumed records as return value.
 - Returns a list of `ConsumerRecords` of previous parametrized types with the already consumed records.
