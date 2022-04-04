@@ -27,7 +27,7 @@ public class KafkaTestPlainConsumer<K,V> {
     }
 
 
-    public List<ConsumerRecord<K,V>> runOrTimeout(Duration timeout, long numberOfRecords, List<String> topics) throws InterruptedException, ExecutionException, TimeoutException {
+    public List<ConsumerRecord<K,V>> pollOrTimeout(Duration timeout, long numberOfRecords, List<String> topics) throws InterruptedException, ExecutionException {
         List<ConsumerRecord<K, V>> recordsConsumed = new ArrayList<>();
         consumer.subscribe(topics);
         ExecutorService executorService = Executors.newSingleThreadExecutor();
@@ -50,5 +50,4 @@ public class KafkaTestPlainConsumer<K,V> {
         }
         return recordsConsumed;
     }
-
 }

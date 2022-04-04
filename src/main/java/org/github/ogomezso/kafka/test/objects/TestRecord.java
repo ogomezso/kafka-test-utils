@@ -5,7 +5,7 @@ import lombok.Value;
 
 @Builder
 @Value
-public class PlainRecord<K, V>{
+public class TestRecord<K, V>{
     K key;
     V value;
 }
