@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 @Slf4j
-public class KafkaTestPlainConsumer<K,V> {
+public abstract class KafkaTestPlainConsumer<K,V> {
 
     private final KafkaConsumer<K, V> consumer;
 
@@ -21,10 +21,7 @@ public class KafkaTestPlainConsumer<K,V> {
         consumer = kafkaConfig.createKafkaPlainConsumer();
     }
 
-    public ConsumerRecord<K, V> process(ConsumerRecord<K, V> record) {
-        log.info("Record: {} consumed at {}.", record, LocalDateTime.now());
-        return record;
-    }
+    public abstract List<ConsumerRecord<K, V>> processRecords(List<ConsumerRecord<K, V>> record);
 
 
     public List<ConsumerRecord<K,V>> pollOrTimeout(Duration timeout, long numberOfRecords, List<String> topics) throws InterruptedException, ExecutionException {
@@ -35,15 +32,20 @@ public class KafkaTestPlainConsumer<K,V> {
             boolean isRunning = true;
             while (isRunning) {
                 ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(500));
-                records.forEach(record -> recordsConsumed.add(process(record)));
+
+                records.forEach(record -> {
+                    log.debug("Record: {} received at {}", record, LocalDateTime.now());
+                    recordsConsumed.add(record);
+                });
                 if (recordsConsumed.size() >= numberOfRecords) isRunning = false;
             }
-            return recordsConsumed;
+            return processRecords(recordsConsumed);
         });
 
         try {
            return pollQueryResults.get(timeout.getSeconds(), TimeUnit.SECONDS);
         } catch (TimeoutException e) {
+            log.debug("Poll cancelled after {} seconds", timeout.getSeconds());
             pollQueryResults.cancel(true);
         } finally {
             executorService.shutdown();
