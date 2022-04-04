@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-public class KafkaTestPlainProducer<K, V> {
+public abstract class KafkaTestPlainProducer<K, V> {
 
     private final KafkaProducer<K, V> plainProducer;
 
@@ -34,19 +34,24 @@ public class KafkaTestPlainProducer<K, V> {
                 }
         );
         plainProducer.flush();
+        List<ProducerRecord<K,V>> processedRecords = processResult(recordsProduced);
         plainProducer.close();
-        return recordsProduced;
+        return processedRecords;
     }
 
     public ProducerRecord<K, V> sendMessage(String topicName, K key, V value) throws InterruptedException {
         ProducerRecord<K, V> record = new ProducerRecord<>(topicName, key, value);
         plainProducer.send(record, (recordMetadata, exception) -> {
             if (exception == null) {
-                log.info("Record written {}", record);
+                log.debug("Record written {}", record);
             } else {
-                exception.printStackTrace(System.err);
+                handleError(exception, record);
             }
         });
         return record;
     }
+
+    public abstract List<ProducerRecord<K,V>> processResult(List<ProducerRecord<K,V>> records);
+
+    public abstract void handleError(Exception e, ProducerRecord<K, V> record);
 }

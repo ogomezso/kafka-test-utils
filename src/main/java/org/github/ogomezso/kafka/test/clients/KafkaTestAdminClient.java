@@ -40,17 +40,17 @@ public class KafkaTestAdminClient {
     }
 
     public List<TopicDescription> describeTopics(List<String> topicsToDescribe) {
-       List<TopicDescription> result = new ArrayList<>();
+        List<TopicDescription> result = new ArrayList<>();
         DescribeTopicsResult topicDescriptions = adminClient.describeTopics(topicsToDescribe);
-       topicDescriptions.topicNameValues().forEach((name,description) -> {
-           try {
-               TopicDescription topicDescription = description.get();
-               log.info("Topic name:{}, isInternal: {}, authorizedOps: {}, partitions {}", topicDescription.name(), topicDescription.isInternal(),topicDescription.authorizedOperations(),topicDescription.partitions());
-               result.add(topicDescription);
-           } catch (InterruptedException | ExecutionException e) {
-               e.printStackTrace();
-           }
-       });
-       return result;
+        topicDescriptions.topicNameValues().forEach((name, description) -> {
+            try {
+                TopicDescription topicDescription = description.get();
+                log.debug("Topic name:{}, isInternal: {}, authorizedOps: {}, partitions {}", topicDescription.name(), topicDescription.isInternal(), topicDescription.authorizedOperations(), topicDescription.partitions());
+                result.add(topicDescription);
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
+        return result;
     }
 }
