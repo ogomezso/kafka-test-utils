@@ -39,17 +39,17 @@ public abstract class KafkaTestPlainConsumer<K,V> {
                 });
                 if (recordsConsumed.size() >= numberOfRecords) isRunning = false;
             }
-            return processRecords(recordsConsumed);
+            return recordsConsumed;
         });
 
         try {
-           return pollQueryResults.get(timeout.getSeconds(), TimeUnit.SECONDS);
+           return processRecords(pollQueryResults.get(timeout.getSeconds(), TimeUnit.SECONDS));
         } catch (TimeoutException e) {
             log.debug("Poll cancelled after {} seconds", timeout.getSeconds());
             pollQueryResults.cancel(true);
         } finally {
             executorService.shutdown();
         }
-        return recordsConsumed;
+        return processRecords(recordsConsumed);
     }
 }

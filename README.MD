@@ -4,13 +4,13 @@
 
 ## General Purpose
 
-This library provides out of the box working clients and environment for **testing purpose**.
+This library provides out of the box working kafka clients for **testing purpose**.
 
 ## Configuration
 
 Each client rely on client property files provided on time of construction.
 
-The recommended way to create provide it is having a properties file on the resources folder of the test package.
+The recommended way to create provide it is having a properties file on the resources' folder of the test package.
 
 A `kafka-config.properties` example looks like:
 
@@ -195,7 +195,7 @@ value.serializer=org.apache.kafka.common.serialization.StringSerializer
 
 ### KafkaTestPlainConsumer
 
-This client wraps `KafkaConsumer` class; provide a parametrized instance that **must match with the serializers configured on KafkaConfig class**.
+This client wraps `KafkaConsumer` class provides a parametrized instance that **must match with the serializers configured on KafkaConfig class**.
 
 Implements `pollOrTimeout` method that:
 - Accepts a list of `String` with the names of the topics to suscribe
@@ -213,3 +213,5 @@ Collections.singletonList(topicConfig.getTopicName()));
 System.out.println("Total Records Consumed:" + recordsConsumed.size());
 recordsConsumed.forEach(record -> System.out.println("Message: " + record));
 ```
+
+**Note: The number of records consumed depends on the batch served on each poll interval, so the number of records that will be finally consumed not only depends on the configuration passed to pollOrTimeout method but on this poll size too.**

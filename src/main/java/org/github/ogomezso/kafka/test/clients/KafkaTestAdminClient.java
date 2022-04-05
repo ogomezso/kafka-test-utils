@@ -42,7 +42,7 @@ public class KafkaTestAdminClient {
     public List<TopicDescription> describeTopics(List<String> topicsToDescribe) {
         List<TopicDescription> result = new ArrayList<>();
         DescribeTopicsResult topicDescriptions = adminClient.describeTopics(topicsToDescribe);
-        topicDescriptions.topicNameValues().forEach((name, description) -> {
+        topicDescriptions.values().forEach((name, description) -> {
             try {
                 TopicDescription topicDescription = description.get();
                 log.debug("Topic name:{}, isInternal: {}, authorizedOps: {}, partitions {}", topicDescription.name(), topicDescription.isInternal(), topicDescription.authorizedOperations(), topicDescription.partitions());
