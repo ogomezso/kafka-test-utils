@@ -3,6 +3,8 @@ package org.github.ogomezso.kafka.test.config;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -17,15 +19,27 @@ public class KafkaConfig {
         kafkaProperties.load(inputStream);
     }
 
+    public KafkaConfig(String propertiesName, Boolean isPropertiesInClasspath) throws IOException {
+        InputStream inputStream;
+        if (isPropertiesInClasspath) {
+            inputStream = getClass().getClassLoader().getResourceAsStream(propertiesName);
+        } else {
+            File propertiesFile = new File(propertiesName);
+            inputStream = new FileInputStream(propertiesFile);
+        }
+        kafkaProperties = new Properties();
+        kafkaProperties.load(inputStream);
+    }
+
     public Properties getKafkaProperties() {
         return kafkaProperties;
     }
 
-    public <K,V> KafkaProducer<K, V> createKafkaPlainProducer() {
+    public <K, V> KafkaProducer<K, V> createKafkaPlainProducer() {
         return new KafkaProducer<>(kafkaProperties);
     }
 
-    public <K,V> KafkaConsumer<K, V> createKafkaPlainConsumer() {
+    public <K, V> KafkaConsumer<K, V> createKafkaPlainConsumer() {
         return new KafkaConsumer<>(kafkaProperties);
     }
 }
