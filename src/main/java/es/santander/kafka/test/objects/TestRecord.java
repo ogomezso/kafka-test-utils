@@ -1,4 +1,4 @@
-package org.github.ogomezso.kafka.test.objects;
+package es.santander.kafka.test.objects;
 
 import lombok.Builder;
 import lombok.Value;

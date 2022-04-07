@@ -1,4 +1,4 @@
-package org.github.ogomezso.kafka.test.config;
+package es.santander.kafka.test.config;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
@@ -35,11 +35,11 @@ public class KafkaConfig {
         return kafkaProperties;
     }
 
-    public <K, V> KafkaProducer<K, V> createKafkaPlainProducer() {
+    public <K, V> KafkaProducer<K, V> createKafkaProducer() {
         return new KafkaProducer<>(kafkaProperties);
     }
 
-    public <K, V> KafkaConsumer<K, V> createKafkaPlainConsumer() {
+    public <K, V> KafkaConsumer<K, V> createKafkaConsumer() {
         return new KafkaConsumer<>(kafkaProperties);
     }
 }

@@ -1,9 +1,9 @@
-package org.github.ogomezso.kafka.test.clients;
+package es.santander.kafka.test.clients;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.*;
-import org.github.ogomezso.kafka.test.config.KafkaConfig;
-import org.github.ogomezso.kafka.test.objects.TestTopicConfig;
+import es.santander.kafka.test.config.KafkaConfig;
+import es.santander.kafka.test.objects.TestTopicConfig;
 
 import java.util.ArrayList;
 import java.util.List;

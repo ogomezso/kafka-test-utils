@@ -1,10 +1,10 @@
-package org.github.ogomezso.kafka.test.clients;
+package es.santander.kafka.test.clients;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.github.ogomezso.kafka.test.config.KafkaConfig;
+import es.santander.kafka.test.config.KafkaConfig;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.concurrent.*;
 
 @Slf4j
-public abstract class KafkaTestPlainConsumer<K,V> {
+public abstract class KafkaTestConsumer<K,V> {
 
     private final KafkaConsumer<K, V> consumer;
 
-    public KafkaTestPlainConsumer(KafkaConfig kafkaConfig) {
-        consumer = kafkaConfig.createKafkaPlainConsumer();
+    public KafkaTestConsumer(KafkaConfig kafkaConfig) {
+        consumer = kafkaConfig.createKafkaConsumer();
     }
 
     public abstract List<ConsumerRecord<K, V>> processRecords(List<ConsumerRecord<K, V>> record);

@@ -8,9 +8,7 @@ This library provides out of the box working kafka clients for **testing purpose
 
 ## Configuration
 
-Each client rely on client property files provided on time of construction.
-
-The recommended way to create provide it is having a properties file on the resources' folder of the test package.
+Each client rely on client properties files provided on time of construction.
 
 A `kafka-config.properties` example looks like:
 
@@ -29,6 +27,13 @@ KafkaConfig kafkaConfig=new KafkaConfig("kafka-config.properties");
 ```
 
 where `kafka-config.properties` should be on your test classpath.
+
+The recommended way to create provide it is having a properties file on the resources folder of the test package.
+
+but you can always pass as parameter a path to the properties file by indicating so in the constructor:
+```java
+KafkaConfig kafkaConfig=new KafkaConfig("kafka-config.properties",true);
+```
 
 ## Objects
 
@@ -139,22 +144,23 @@ topicDescriptionList.forEach(description -> {
 adminClient.deleteTopics(Collections.singletonList(topicConfig.getTopicName()));
 ```
 
-### KafkaTestPlainProducer
+### KafkaTestProducer
 
 This client wraps `KafkaProducer` class; provide a parametrized instance that **must match with the serializers configured on KafkaConfig class**.
 
 Implements `produceMessages` method that:
-- Accepts a list of `TestRecord` objects parametrized as _simple java types_ and `topic name string` as parameter.
+- Accepts a list of `TestRecord` objects parametrized as _the same Type you're using on the serializer config_ and `topic name string` as parameter.
 - Do the flush and the producer close after producing the whole list.
 - Provide abstract methods to customize the process and error handling of the producer:
 - `processResult`: takes the list of `ProducerRecords<K,V>` returned by kafka client's `send` method as parameter and return a list of `ProducerRecords<K,V>`. Use this method for the post-production process you need to implement.
 - `handleError`: takes and Exception and the list of `ProducerRecords<K,V>` returned by kafka client's `send` method as parameters. Use this method for error handling during the message production.
-- 
+- **Key is optional**, but type is still needed on the parametrized constructor (String Type recommended)
+
 **Note:**
 
 **`processResult` method will be executed between flush and close of the `KafkaProducer`**
 
-**`handleError` method will be execute in case of exception on `KafkaProducer` send method.**
+**`handleError` method will be executed in case of exception on `KafkaProducer` send method.**
 
 Examples:
 
@@ -193,7 +199,7 @@ key.serializer=org.apache.kafka.common.serialization.IntegerSerializer
 value.serializer=org.apache.kafka.common.serialization.StringSerializer
 ```
 
-### KafkaTestPlainConsumer
+### KafkaTestConsumer
 
 This client wraps `KafkaConsumer` class provides a parametrized instance that **must match with the serializers configured on KafkaConfig class**.
 
@@ -215,3 +221,20 @@ recordsConsumed.forEach(record -> System.out.println("Message: " + record));
 ```
 
 **Note: The number of records consumed depends on the batch served on each poll interval, so the number of records that will be finally consumed not only depends on the configuration passed to pollOrTimeout method but on this poll size too.**
+
+## Explicit Clients
+
+### KafkaTestTextFileProducer
+
+This client extends `KafkaTestProducer`, read a text file line by line and produce **String typed messages** in 2 possible ways:
+
+- **Messages with Key**  using `produceFromFile` method that takes as parameter:
+  - `topicName`: Topic to produce
+  - `filePath`: Path to the data file.
+  - `keySeparator`: String to use to differentiate the key. **Key must be at the start of each line**.
+
+- **Messages without Key**  using `produceFromFileWithout` method that takes as parameter:
+    - `topicName`: Topic to produce
+    - `filePath`: Path to the data file.
+
+both methods return `List<ProducerRecord<String,String>` and expose the same abstract methods that `KafkaTestProducer`
