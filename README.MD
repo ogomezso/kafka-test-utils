@@ -12,34 +12,34 @@ Each client rely on client properties files provided on time of construction.
 
 A `kafka-config.properties` example looks like:
 
-````properties
+~~~properties
 bootstrap.servers=127.0.0.1:1092,127.0.0.1:2092,127.0.0.1:3092
 acks=all
 client.id=client-test-producer
 key.serializer=org.apache.kafka.common.serialization.IntegerSerializer
 value.serializer=org.apache.kafka.common.serialization.StringSerializer
-````
+~~~
 
 To make it available as `Properties` class:
 
-```java
+~~~java
 KafkaConfig kafkaConfig=new KafkaConfig("kafka-config.properties");
-```
+~~~
 
 where `kafka-config.properties` should be on your test classpath.
 
 The recommended way to create provide it is having a properties file on the resources folder of the test package.
 
 but you can always pass as parameter a path to the properties file by indicating so in the constructor:
-```java
+~~~java
 KafkaConfig kafkaConfig=new KafkaConfig("kafka-config.properties",true);
-```
+~~~
 
 ## Objects
 
 ### TestTopicConfig
 
-```TestTopicConfig``` object wraps the basic configuration for kafka client `NewTopic` object such as:
+`TestTopicConfig` object wraps the basic configuration for kafka client `NewTopic` object such as:
 
 - Topic Name
 - Partition Number
@@ -57,12 +57,12 @@ The class provides _builder_ and getter _methods_
 
 Example:
 
-````
+~~~java
 TestRecord<Integer, String>> recordsToProduce = PlainRecord.<Integer, String>builder()
     .key(1)
     .value("1.a")
     .build()
-````
+~~~
 
 ## Basic Clients
 
@@ -79,10 +79,10 @@ KafkaTest Admin client instantiate a kafka admin client and provides functionali
 1. ``KafkaConfig`` Class: Instantiate a new Config Class as related on _Configuration Section_
 2. Create a new Instance of ```KafkaTestAdminClient``` as follows:
 
-```
+~~~java
 KafkaConfig kafkaConfig = new KafkaConfig("kafka-config.properties");
 KafkaTestAdminClient adminClient = new KafkaTestAdminClient(kafkaConfig);
-```
+~~~
 
 #### Topic Creation
 
@@ -90,7 +90,7 @@ KafkaTestAdminClient adminClient = new KafkaTestAdminClient(kafkaConfig);
 
 Example of a single topic creation:
 
-````
+~~~java
 TestTopicConfig topicConfig = TestTopicConfig.builder()
     .topicName("example-topic")
     .partitionNumber(3)
@@ -99,7 +99,7 @@ TestTopicConfig topicConfig = TestTopicConfig.builder()
 KafkaConfig kafkaConfig = new KafkaConfig("kafka-config.properties");
 KafkaTestAdminClient adminClient = new KafkaTestAdminClient(kafkaConfig);
 adminClient.createTopics(Collections.singletonList(topicConfig));
-````
+~~~
 
 **This method has no effects on existing topics**
 
@@ -108,7 +108,7 @@ adminClient.createTopics(Collections.singletonList(topicConfig));
 `describeTopics` retrieves a list of `TopicDescription` kafka objects containing all the topic information from a list
 of `TestTopicConfig` object.
 
-```
+~~~java
 List<TopicDescription> topicDescriptionList = adminClient
     .describeTopics(Collections.singletonList(topicConfig.getTopicName()));
 topicDescriptionList.forEach(description -> {
@@ -134,15 +134,15 @@ topicDescriptionList.forEach(description -> {
     });
     System.out.println("************************");
 });
-```
+~~~
 
 ### Delete Topics
 
 `deleteTopics()` delete a given list of `topics` passed as List of String arguments.
 
-```
+~~~java
 adminClient.deleteTopics(Collections.singletonList(topicConfig.getTopicName()));
-```
+~~~
 
 ### KafkaTestProducer
 
@@ -164,7 +164,8 @@ Implements `produceMessages` method that:
 
 Examples:
 
-```producer-records
+##### Producer Records
+~~~java
  KafkaConfig kafkaProducerConfig = new KafkaConfig("kafka-producer-config.properties");
  KafkaTestPlainProducer<Integer, String> plainProducer = new KafkaTestPlainProducer<>(kafkaProducerConfig);
  List<TestRecord<Integer, String>> recordsToProduce = List.of(
@@ -190,14 +191,17 @@ Examples:
     TestRecord.<Integer, String>builder().key(4).value("4.e").build()
  );
  plainProducer.produceMessages(topicConfig.getTopicName(), recordsToProduce);
-```
-```kafka-producer-config.properties
+~~~
+
+##### Kafka Properties
+
+~~~properties
 bootstrap.servers=127.0.0.1:1092,127.0.0.1:2092,127.0.0.1:3092
 acks=all
 client.id=client-test-producer
 key.serializer=org.apache.kafka.common.serialization.IntegerSerializer
 value.serializer=org.apache.kafka.common.serialization.StringSerializer
-```
+~~~
 
 ### KafkaTestConsumer
 
@@ -211,14 +215,15 @@ Implements `pollOrTimeout` method that:
 - Returns a list of `ConsumerRecords` of previous parametrized types with the already consumed records.
 - To create multiple instances of consumer group just instantiate more than one class with the same `group.id`.
 
-```consumer example
+##### Consumer Example
+~~~java
 KafkaConfig kafkaConsumerConfig = new KafkaConfig("kafka-consumer-config.properties");
 KafkaTestPlainConsumer<Integer, String> plainConsumer = new KafkaTestPlainConsumer<>(kafkaConsumerConfig);
 List<ConsumerRecord<Integer, String>> recordsConsumed = plainConsumer.runOrTimeout(Duration.ofSeconds(30L), 1000L,
 Collections.singletonList(topicConfig.getTopicName()));
 System.out.println("Total Records Consumed:" + recordsConsumed.size());
 recordsConsumed.forEach(record -> System.out.println("Message: " + record));
-```
+~~~
 
 **Note: The number of records consumed depends on the batch served on each poll interval, so the number of records that will be finally consumed not only depends on the configuration passed to pollOrTimeout method but on this poll size too.**
 
@@ -238,3 +243,25 @@ This client extends `KafkaTestProducer`, read a text file line by line and produ
     - `filePath`: Path to the data file.
 
 both methods return `List<ProducerRecord<String,String>` and expose the same abstract methods that `KafkaTestProducer`
+
+### In memory Cluster
+ 
+**The recommended for testing Kafka Clients within a server is [Test-Containers](https://www.testcontainers.org/modules/kafka/)** but for the ones of you that can not use `docker` on local or CI environments this library provides a very basic in-memory cluster with:
+
+> 1. Zookeeper Server attending on `127.0.0.1:2181`
+> 2. Single Broker attending on `127.0.0.1:9092`
+> 3. Schema Registry server on `http://127.0.0.1:8081`
+> 
+> **All servers use `plaintext` as security protocol** 
+
+You can easily start the cluster by instantiating `EmbeddedSingleNodeCluster()` as follows:
+
+~~~java
+EmbeddedSingleNodeCluster cluster = new EmbeddedSingleNodeCluster();
+~~~
+
+You should `shutdown` the cluster after finishing the test:
+
+~~~java
+cluster.shutdown();
+~~~
