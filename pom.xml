@@ -13,7 +13,6 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <kafka.version>3.0.1</kafka.version>
-        <junit.version>5.8.2</junit.version>
     </properties>
 
     <dependencies>
@@ -53,21 +52,6 @@
             <artifactId>kafka-schema-registry</artifactId>
             <version>${project.version}</version>
             <classifier>tests</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-            <version>${junit.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.version}</version>
         </dependency>
     </dependencies>
 </project>
