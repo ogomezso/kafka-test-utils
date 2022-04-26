@@ -6,13 +6,14 @@
 
     <groupId>es.santander</groupId>
     <artifactId>kafka-test-utils</artifactId>
-    <version>7.0.1</version>
+    <version>0.0.1-7.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <kafka.version>3.0.1</kafka.version>
+        <cp.version>7.0.1</cp.version>
     </properties>
 
     <dependencies>
@@ -24,7 +25,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.22</version>
+            <version>1.18.24</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -45,12 +46,12 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-schema-registry</artifactId>
-            <version>${project.version}</version>
+            <version>${cp.version}</version>
         </dependency>
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-schema-registry</artifactId>
-            <version>${project.version}</version>
+            <version>${cp.version}</version>
             <classifier>tests</classifier>
         </dependency>
     </dependencies>

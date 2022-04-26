@@ -2,6 +2,10 @@
 
 # Kafka Test Utils
 
+## Version Info
+
+First 3 digits correspond with library version, the last one will correspond with the Confluent Platform/Apache Kafka Clients version used on it.
+
 ## General Purpose
 
 This library provides out of the box working kafka clients for **testing purpose**.
