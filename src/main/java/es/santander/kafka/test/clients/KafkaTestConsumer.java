@@ -39,6 +39,9 @@ public abstract class KafkaTestConsumer<K,V> {
                 });
                 if (recordsConsumed.size() >= numberOfRecords) isRunning = false;
             }
+            consumer.commitSync(timeout);
+            consumer.unsubscribe();
+            consumer.close(timeout);
             return recordsConsumed;
         });
 
