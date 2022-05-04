@@ -40,11 +40,8 @@ public abstract class KafkaTestConsumer<K,V> {
                 if (recordsConsumed.size() >= numberOfRecords) isRunning = false;
             }
             consumer.commitSync(timeout);
-            consumer.unsubscribe();
-            consumer.close(timeout);
             return recordsConsumed;
         });
-
         try {
            return processRecords(pollQueryResults.get(timeout.getSeconds(), TimeUnit.SECONDS));
         } catch (TimeoutException e) {
@@ -54,5 +51,10 @@ public abstract class KafkaTestConsumer<K,V> {
             executorService.shutdown();
         }
         return processRecords(recordsConsumed);
+    }
+
+    public void close(){
+        consumer.unsubscribe();
+        consumer.close(Duration.ofSeconds(3L));
     }
 }

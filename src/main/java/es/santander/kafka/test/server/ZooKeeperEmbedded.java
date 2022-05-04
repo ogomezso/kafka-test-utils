@@ -19,6 +19,7 @@ public class ZooKeeperEmbedded {
 
     public void stop() throws IOException {
         log.debug("Shutting down embedded ZooKeeper server at {} ...", server.getConnectString());
+        server.stop();
         server.close();
         log.debug("Shutdown of embedded ZooKeeper server at {} completed", server.getConnectString());
     }

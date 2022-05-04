@@ -14,9 +14,6 @@ import java.util.Properties;
 @Slf4j
 public class KafkaEmbedded {
     private static final String DEFAULT_ZK_CONNECT = "127.0.0.1:2181";
-    private static final int DEFAULT_ZK_SESSION_TIMEOUT_MS = 10 * 1000;
-    private static final int DEFAULT_ZK_CONNECTION_TIMEOUT_MS = 8 * 1000;
-
     private final Properties effectiveConfig;
     private final KafkaServer kafka;
 
@@ -49,7 +46,7 @@ public class KafkaEmbedded {
         effectiveConfig.setProperty(KafkaConfig$.MODULE$.LogDirProp(), logDir);
         effectiveConfig.setProperty("zookeeper.connect", DEFAULT_ZK_CONNECT);
         effectiveConfig.setProperty(KafkaConfig$.MODULE$.DefaultReplicationFactorProp(), "1");
-        effectiveConfig.setProperty(KafkaConfig$.MODULE$.OffsetsTopicReplicationFactorProp(),"1");
+        effectiveConfig.setProperty(KafkaConfig$.MODULE$.OffsetsTopicReplicationFactorProp(), "1");
         return effectiveConfig;
     }
 

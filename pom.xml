@@ -6,7 +6,7 @@
 
     <groupId>es.santander</groupId>
     <artifactId>kafka-test-utils</artifactId>
-    <version>0.0.1-7.0.1</version>
+    <version>0.0.1_7.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -53,6 +53,18 @@
             <artifactId>kafka-schema-registry</artifactId>
             <version>${cp.version}</version>
             <classifier>tests</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.22.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <dependencyManagement>
