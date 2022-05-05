@@ -1,8 +1,8 @@
 package es.santander.kafka.test.clients;
 
+import es.santander.kafka.test.config.KafkaTestConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.*;
-import es.santander.kafka.test.config.KafkaConfig;
 import es.santander.kafka.test.objects.TestTopicConfig;
 
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ public class KafkaTestAdminClient {
 
     private final AdminClient adminClient;
 
-    public KafkaTestAdminClient(KafkaConfig kafkaConfig) {
-        this.adminClient = AdminClient.create(kafkaConfig.getKafkaProperties());
+    public KafkaTestAdminClient(KafkaTestConfig kafkaTestConfig) {
+        this.adminClient = AdminClient.create(kafkaTestConfig.getKafkaProperties());
     }
 
     public void createTopics(List<TestTopicConfig> topicsToCreate) throws ExecutionException, InterruptedException {

@@ -1,9 +1,9 @@
 package es.santander.kafka.test.clients;
 
+import es.santander.kafka.test.config.KafkaTestConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import es.santander.kafka.test.config.KafkaConfig;
 import es.santander.kafka.test.objects.TestRecord;
 
 import java.util.ArrayList;
@@ -17,8 +17,8 @@ public abstract class KafkaTestProducer<K, V> {
     private final KafkaProducer<K, V> plainProducer;
 
 
-    public KafkaTestProducer(KafkaConfig kafkaConfig) {
-        plainProducer = kafkaConfig.createKafkaProducer();
+    public KafkaTestProducer(KafkaTestConfig kafkaTestConfig) {
+        plainProducer = kafkaTestConfig.createKafkaProducer();
     }
 
 

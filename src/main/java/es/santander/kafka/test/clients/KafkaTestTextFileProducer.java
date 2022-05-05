@@ -1,6 +1,6 @@
 package es.santander.kafka.test.clients;
 
-import es.santander.kafka.test.config.KafkaConfig;
+import es.santander.kafka.test.config.KafkaTestConfig;
 import es.santander.kafka.test.objects.TestRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
@@ -17,8 +17,8 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 public abstract class KafkaTestTextFileProducer extends KafkaTestProducer<String, String> {
-    public KafkaTestTextFileProducer(KafkaConfig kafkaConfig) {
-        super(kafkaConfig);
+    public KafkaTestTextFileProducer(KafkaTestConfig kafkaTestConfig) {
+        super(kafkaTestConfig);
     }
 
     public abstract List<ProducerRecord<String, String>> processResult(List<ProducerRecord<String, String>> producerRecords);

@@ -14,14 +14,11 @@ public class SchemaRegistryEmbedded {
     private static final String KAFKA_SCHEMAS_TOPIC = "_schemas";
     private static final String AVRO_COMPATIBILITY_TYPE = CompatibilityLevel.NONE.name;
 
-    private static final String DEFAULT_ZK_CONNECT = "127.0.0.1:2181";
-    private static final String DEFAULT_BOOSTRAP_SERVER = "127.0.0.1:9092";
-
     private final RestApp schemaRegistry;
 
-    public SchemaRegistryEmbedded() throws Exception {
+    public SchemaRegistryEmbedded(int i, String zkConnect, String brokerConnect) throws Exception {
 
-        schemaRegistry = new RestApp(8081, DEFAULT_ZK_CONNECT, DEFAULT_BOOSTRAP_SERVER, KAFKA_SCHEMAS_TOPIC, AVRO_COMPATIBILITY_TYPE, true, schemaRegistryConfig());
+        schemaRegistry = new RestApp(i, zkConnect, brokerConnect, KAFKA_SCHEMAS_TOPIC, AVRO_COMPATIBILITY_TYPE, true, schemaRegistryConfig());
         schemaRegistry.start();
     }
 
@@ -32,6 +29,10 @@ public class SchemaRegistryEmbedded {
         schemaRegistryProps.put(SchemaRegistryConfig.KAFKASTORE_INIT_TIMEOUT_CONFIG, KAFKASTORE_INIT_TIMEOUT);
 
         return schemaRegistryProps;
+    }
+
+    public String url(){
+        return schemaRegistry.restConnect;
     }
 
     public void stop() throws Exception {

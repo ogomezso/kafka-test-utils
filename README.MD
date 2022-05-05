@@ -27,7 +27,7 @@ value.serializer=org.apache.kafka.common.serialization.StringSerializer
 To make it available as `Properties` class:
 
 ~~~java
-KafkaConfig kafkaConfig=new KafkaConfig("kafka-config.properties");
+KafkaTestConfig kafkaTestConfig=new KafkaTestConfig("kafka-config.properties");
 ~~~
 
 where `kafka-config.properties` should be on your test classpath.
@@ -36,7 +36,15 @@ The recommended way to create provide it is having a properties file on the reso
 
 but you can always pass as parameter a path to the properties file by indicating so in the constructor:
 ~~~java
-KafkaConfig kafkaConfig=new KafkaConfig("kafka-config.properties",true);
+KafkaTestConfig kafkaTestConfig=new KafkaTestConfig("kafka-config.properties",false);
+~~~
+
+`KafkaTestConfig`class provides `setProperty` that allows you to change or add any property on runtime:
+
+For example to change brokers connection string you can:
+
+~~~java
+kafkaTestConfig.setProperty("bootstrap.servers", "127.0.0.1:43453");
 ~~~
 
 ## Objects
@@ -80,12 +88,12 @@ KafkaTest Admin client instantiate a kafka admin client and provides functionali
 
 #### Client Instantiation
 
-1. ``KafkaConfig`` Class: Instantiate a new Config Class as related on _Configuration Section_
+1. ``KafkaTestConfig`` Class: Instantiate a new Config Class as related on _Configuration Section_
 2. Create a new Instance of ```KafkaTestAdminClient``` as follows:
 
 ~~~java
-KafkaConfig kafkaConfig = new KafkaConfig("kafka-config.properties");
-KafkaTestAdminClient adminClient = new KafkaTestAdminClient(kafkaConfig);
+KafkaTestConfig kafkaTestConfig = new KafkaTestConfig("kafka-config.properties");
+KafkaTestAdminClient adminClient = new KafkaTestAdminClient(kafkaTestConfig);
 ~~~
 
 #### Topic Creation
@@ -100,8 +108,8 @@ TestTopicConfig topicConfig = TestTopicConfig.builder()
     .partitionNumber(3)
     .replicationFactor((short) 3)
     .build();
-KafkaConfig kafkaConfig = new KafkaConfig("kafka-config.properties");
-KafkaTestAdminClient adminClient = new KafkaTestAdminClient(kafkaConfig);
+KafkaTestConfig kafkaTestConfig = new KafkaTestConfig("kafka-config.properties");
+KafkaTestAdminClient adminClient = new KafkaTestAdminClient(kafkaTestConfig);
 adminClient.createTopics(Collections.singletonList(topicConfig));
 ~~~
 
@@ -150,7 +158,7 @@ adminClient.deleteTopics(Collections.singletonList(topicConfig.getTopicName()));
 
 ### KafkaTestProducer
 
-This client wraps `KafkaProducer` class; provide a parametrized instance that **must match with the serializers configured on KafkaConfig class**.
+This client wraps `KafkaProducer` class; provide a parametrized instance that **must match with the serializers configured on KafkaTestConfig class**.
 
 Implements `produceMessages` method that:
 - Accepts a list of `TestRecord` objects parametrized as _the same Type you're using on the serializer config_ and `topic name string` as parameter.
@@ -170,7 +178,7 @@ Examples:
 
 ##### Producer Records
 ~~~java
- KafkaConfig kafkaProducerConfig = new KafkaConfig("kafka-producer-config.properties");
+ KafkaTestConfig kafkaProducerConfig = new KafkaTestConfig("kafka-producer-config.properties");
  KafkaTestPlainProducer<Integer, String> plainProducer = new KafkaTestPlainProducer<>(kafkaProducerConfig);
  List<TestRecord<Integer, String>> recordsToProduce = List.of(
     TestRecord.<Integer, String>builder().key(1).value("1.a").build(),
@@ -209,7 +217,7 @@ value.serializer=org.apache.kafka.common.serialization.StringSerializer
 
 ### KafkaTestConsumer
 
-This client wraps `KafkaConsumer` class provides a parametrized instance that **must match with the serializers configured on KafkaConfig class**.
+This client wraps `KafkaConsumer` class provides a parametrized instance that **must match with the serializers configured on KafkaTestConfig class**.
 
 Implements `pollOrTimeout` method that:
 - Accepts a list of `String` with the names of the topics to suscribe
@@ -221,7 +229,7 @@ Implements `pollOrTimeout` method that:
 
 ##### Consumer Example
 ~~~java
-KafkaConfig kafkaConsumerConfig = new KafkaConfig("kafka-consumer-config.properties");
+KafkaTestConfig kafkaConsumerConfig = new KafkaTestConfig("kafka-consumer-config.properties");
 KafkaTestPlainConsumer<Integer, String> plainConsumer = new KafkaTestPlainConsumer<>(kafkaConsumerConfig);
 List<ConsumerRecord<Integer, String>> recordsConsumed = plainConsumer.runOrTimeout(Duration.ofSeconds(30L), 1000L,
 Collections.singletonList(topicConfig.getTopicName()));
@@ -250,12 +258,8 @@ both methods return `List<ProducerRecord<String,String>` and expose the same abs
 
 ### In memory Cluster
  
-**The recommended for testing Kafka Clients within a server is [Test-Containers](https://www.testcontainers.org/modules/kafka/)** but for the ones of you that can not use `docker` on local or CI environments this library provides a very basic in-memory cluster with:
+**The recommended for testing Kafka Clients within a server is [Test-Containers](https://www.testcontainers.org/modules/kafka/)** but for the ones of you that can not use `docker` on local or CI environments this library provides a very basic in-memory cluster with all componentes deployed on `localhost`on `randomPorts`
 
-> 1. Zookeeper Server attending on `127.0.0.1:2181`
-> 2. Single Broker attending on `127.0.0.1:9092`
-> 3. Schema Registry server on `http://127.0.0.1:8081`
-> 
 > **All servers use `plaintext` as security protocol** 
 
 To create a new instance of `EmbeddedSingleNodeCluster()` you will need to create a temporary folder:
@@ -277,11 +281,19 @@ EmbeddedSingleNodeCluster testCluster = new EmbeddedSingleNodeCluster(folder.new
 
 To start the cluster:
 ~~~java
-cluster.start();
+testCluster.start();
 ~~~
 
 You should `shutdown` the cluster after finishing the test:
 
 ~~~java
-cluster.shutdown();
+testCluster.shutdown();
+~~~
+
+`EmbeddedSingleNodeCluster` object provides method to get the connection string of all components:
+
+~~~java
+public String getBrokerConnectString()
+public String  getZkConnectString()
+public String getSrConnectString()
 ~~~

@@ -1,10 +1,10 @@
 package es.santander.kafka.test.clients;
 
+import es.santander.kafka.test.config.KafkaTestConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
-import es.santander.kafka.test.config.KafkaConfig;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -17,8 +17,8 @@ public abstract class KafkaTestConsumer<K,V> {
 
     private final KafkaConsumer<K, V> consumer;
 
-    public KafkaTestConsumer(KafkaConfig kafkaConfig) {
-        consumer = kafkaConfig.createKafkaConsumer();
+    public KafkaTestConsumer(KafkaTestConfig kafkaTestConfig) {
+        consumer = kafkaTestConfig.createKafkaConsumer();
     }
 
     public abstract List<ConsumerRecord<K, V>> processRecords(List<ConsumerRecord<K, V>> record);

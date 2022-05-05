@@ -1,15 +1,13 @@
 package es.santander.kafka.test.clients;
 
-import es.santander.kafka.test.config.KafkaConfig;
+import es.santander.kafka.test.config.KafkaTestConfig;
 import es.santander.kafka.test.objects.TestRecord;
 import es.santander.kafka.test.objects.TestTopicConfig;
 import es.santander.kafka.test.server.EmbeddedSingleNodeCluster;
 import org.apache.kafka.clients.admin.TopicDescription;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.AfterClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.TemporaryFolder;
 
 import java.time.Duration;
@@ -26,15 +24,12 @@ public class ClientsTest {
 
     @ClassRule
     public static TemporaryFolder folder = new TemporaryFolder();
-    private final KafkaConfig adminConfig = new KafkaConfig("kafka-config.properties");
-    private final KafkaTestAdminClient testAdminClient = new KafkaTestAdminClient(adminConfig);
-    private final KafkaConfig producerConfig = new KafkaConfig("kafka-producer-config.properties");
-    private final KafkaConfig consumerConfig = new KafkaConfig("kafka-consumer-config.properties");
+    private KafkaTestConfig adminConfig = new KafkaTestConfig("kafka-config.properties");
+    private KafkaTestConfig producerConfig = new KafkaTestConfig("kafka-producer-config.properties");
+    private KafkaTestConfig consumerConfig = new KafkaTestConfig("kafka-consumer-config.properties");
 
     public ClientsTest() throws Exception {
     }
-
-
     @AfterClass
     public static void cleanup() throws Exception {
         folder.delete();
@@ -45,6 +40,8 @@ public class ClientsTest {
         EmbeddedSingleNodeCluster cluster = new EmbeddedSingleNodeCluster(folder.newFolder("kafka"));
         cluster.start();
         List<TestTopicConfig> expected = createTestTopics();
+        adminConfig.setProperty("bootstrap.servers", cluster.getBrokerConnectString());
+        KafkaTestAdminClient testAdminClient = new KafkaTestAdminClient(adminConfig);
         testAdminClient.createTopics(expected);
         List<String> topicsToDescribe = expected.stream().map(TestTopicConfig::getTopicName).collect(Collectors.toList());
         List<TopicDescription> actual = testAdminClient.describeTopics(topicsToDescribe);
@@ -66,6 +63,7 @@ public class ClientsTest {
                 .collect(Collectors.toList());
         assertThat(topicNamesAfterDeletion).doesNotContain("topic-test-1");
 
+        producerConfig.setProperty("bootstrap.servers", cluster.getBrokerConnectString());
         KafkaTestProducer<Integer, String> producer = new KafkaTestProducer<Integer, String>(producerConfig) {
             @Override
             public List<ProducerRecord<Integer, String>> processResult(List<ProducerRecord<Integer, String>> producerRecords) {
@@ -79,6 +77,7 @@ public class ClientsTest {
             }
         };
 
+        consumerConfig.setProperty("bootstrap.servers", cluster.getBrokerConnectString());
         KafkaTestConsumer<Integer, String> consumer = new KafkaTestConsumer<Integer, String>(consumerConfig) {
             @Override
             public List<ConsumerRecord<Integer, String>> processRecords(List<ConsumerRecord<Integer, String>> records) {

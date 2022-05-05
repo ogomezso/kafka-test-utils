@@ -2,17 +2,17 @@ package es.santander.kafka.test.config;
 
 import org.junit.Test;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class KafkaConfigTest {
+public class KafkaTestConfigTest {
 
     @Test
     public void givenPropertiesInClasspathKafkaConfigCorrectlyCreated() throws IOException {
 
-        KafkaConfig actualValue = new KafkaConfig("kafka-config.properties");
+        KafkaTestConfig actualValue = new KafkaTestConfig("kafka-config.properties");
 
         assertThat(actualValue.getKafkaProperties())
                 .containsKey("bootstrap.servers")
@@ -22,7 +22,7 @@ public class KafkaConfigTest {
     @Test
     public void givenPropertiesOutsideClasspathKafkaConfigCorrectlyCreated() throws IOException {
 
-        KafkaConfig actualValue = new KafkaConfig("testProperties/kafka-config.properties", false);
+        KafkaTestConfig actualValue = new KafkaTestConfig("testProperties/kafka-config.properties", false);
 
         assertThat(actualValue.getKafkaProperties())
                 .containsKey("bootstrap.servers")
@@ -32,12 +32,12 @@ public class KafkaConfigTest {
     @Test(expected = NullPointerException.class)
     public void givenNoExistingPropertiesNameThrowsException() throws IOException {
 
-       new KafkaConfig("afka-config.properties");
+        new KafkaTestConfig("afka-config.properties");
     }
 
-    @Test(expected = FileNotFoundException.class)
+    @Test(expected = NoSuchFileException.class)
     public void givenNonExistingPropertiesOutsideClasspathKafkaConfigCorrectlyCreated() throws IOException {
 
-        new KafkaConfig("fake/kafka-config.properties", false);
+        new KafkaTestConfig("fake/kafka-config.properties", false);
     }
 }

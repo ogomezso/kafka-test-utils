@@ -4,28 +4,28 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Properties;
 
-public class KafkaConfig {
+public class KafkaTestConfig {
 
     private final Properties kafkaProperties;
 
-    public KafkaConfig(String propertiesName) throws IOException {
+    public KafkaTestConfig(String propertiesName) throws IOException {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesName);
         kafkaProperties = new Properties();
         kafkaProperties.load(inputStream);
     }
 
-    public KafkaConfig(String propertiesName, Boolean isPropertiesInClasspath) throws IOException {
+    public KafkaTestConfig(String propertiesName, Boolean isPropertiesInClasspath) throws IOException {
         InputStream inputStream;
         if (isPropertiesInClasspath) {
             inputStream = getClass().getClassLoader().getResourceAsStream(propertiesName);
         } else {
             File propertiesFile = new File(propertiesName);
-            inputStream = new FileInputStream(propertiesFile);
+            inputStream = Files.newInputStream(propertiesFile.toPath());
         }
         kafkaProperties = new Properties();
         kafkaProperties.load(inputStream);
@@ -33,6 +33,10 @@ public class KafkaConfig {
 
     public Properties getKafkaProperties() {
         return kafkaProperties;
+    }
+
+    public void setProperty(String key, String value) {
+        kafkaProperties.setProperty(key, value);
     }
 
     public <K, V> KafkaProducer<K, V> createKafkaProducer() {
