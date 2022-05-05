@@ -258,10 +258,26 @@ both methods return `List<ProducerRecord<String,String>` and expose the same abs
 > 
 > **All servers use `plaintext` as security protocol** 
 
-You can easily start the cluster by instantiating `EmbeddedSingleNodeCluster()` as follows:
+To create a new instance of `EmbeddedSingleNodeCluster()` you will need to create a temporary folder:
+
+On testing environment (JUnit 4) the best way to it is via `@Rule` or `@ClassRule`;
 
 ~~~java
-EmbeddedSingleNodeCluster cluster = new EmbeddedSingleNodeCluster();
+@ClassRule
+public static TemporaryFolder folder = new TemporaryFolder();
+~~~
+
+This temporary folder contains all kafka data logs and will be destroyed after the tests.
+
+WARNING: Be aware that in case of not graceful shutdown is there a possibility of no deletion of this data.
+
+~~~java
+EmbeddedSingleNodeCluster testCluster = new EmbeddedSingleNodeCluster(folder.newFolder("kafka"));
+~~~
+
+To start the cluster:
+~~~java
+cluster.start();
 ~~~
 
 You should `shutdown` the cluster after finishing the test:
