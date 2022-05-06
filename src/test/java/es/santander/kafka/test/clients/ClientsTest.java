@@ -1,14 +1,7 @@
 package es.santander.kafka.test.clients;
 
-import es.santander.kafka.test.config.KafkaTestConfig;
-import es.santander.kafka.test.objects.TestRecord;
-import es.santander.kafka.test.objects.TestTopicConfig;
-import es.santander.kafka.test.server.EmbeddedSingleNodeCluster;
-import org.apache.kafka.clients.admin.TopicDescription;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.junit.*;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.Duration;
 import java.util.Arrays;
@@ -16,9 +9,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.kafka.clients.admin.TopicDescription;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.junit.AfterClass;
+import org.junit.ClassRule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+
+import es.santander.kafka.test.config.KafkaTestConfig;
+import es.santander.kafka.test.objects.TestRecord;
+import es.santander.kafka.test.objects.TestTopicConfig;
+import es.santander.kafka.test.server.EmbeddedSingleNodeCluster;
 
 public class ClientsTest {
 
@@ -30,6 +32,7 @@ public class ClientsTest {
 
     public ClientsTest() throws Exception {
     }
+
     @AfterClass
     public static void cleanup() throws Exception {
         folder.delete();
@@ -43,30 +46,31 @@ public class ClientsTest {
         adminConfig.setProperty("bootstrap.servers", cluster.getBrokerConnectString());
         KafkaTestAdminClient testAdminClient = new KafkaTestAdminClient(adminConfig);
         testAdminClient.createTopics(expected);
-        List<String> topicsToDescribe = expected.stream().map(TestTopicConfig::getTopicName).collect(Collectors.toList());
+        List<String> topicsToDescribe = expected.stream().map(TestTopicConfig::getTopicName)
+                .collect(Collectors.toList());
         List<TopicDescription> actual = testAdminClient.describeTopics(topicsToDescribe);
 
         assertEquals(3, actual.size());
         actual.forEach(
-                topicDescription ->
-                        assertTrue(topicsToDescribe.contains(topicDescription.name()))
-        );
+                topicDescription -> assertTrue(topicsToDescribe.contains(topicDescription.name())));
 
         testAdminClient.deleteTopics(Collections.singletonList("test-topic-1"));
 
-        // List<TopicDescription> actualAfterDeletion = testAdminClient.describeTopics(topicsToDescribe);
+        // List<TopicDescription> actualAfterDeletion =
+        // testAdminClient.describeTopics(topicsToDescribe);
         // assertEquals(2, actualAfterDeletion.size());
 
         // List<String> topicNamesAfterDeletion = actualAfterDeletion
-        //         .stream()
-        //         .map(TopicDescription::name)
-        //         .collect(Collectors.toList());
+        // .stream()
+        // .map(TopicDescription::name)
+        // .collect(Collectors.toList());
         // assertThat(topicNamesAfterDeletion).doesNotContain("topic-test-1");
 
         producerConfig.setProperty("bootstrap.servers", cluster.getBrokerConnectString());
         KafkaTestProducer<Integer, String> producer = new KafkaTestProducer<Integer, String>(producerConfig) {
             @Override
-            public List<ProducerRecord<Integer, String>> processResult(List<ProducerRecord<Integer, String>> producerRecords) {
+            public List<ProducerRecord<Integer, String>> processResult(
+                    List<ProducerRecord<Integer, String>> producerRecords) {
                 return producerRecords;
             }
 
@@ -89,11 +93,13 @@ public class ClientsTest {
 
         List<TestRecord<Integer, String>> expectedRecords = createTestRecords();
 
-        List<ProducerRecord<Integer, String>> actualProducedRecords = producer.produceMessages(topicName, expectedRecords);
+        List<ProducerRecord<Integer, String>> actualProducedRecords = producer.produceMessages(topicName,
+                expectedRecords);
 
         assertEquals(expectedRecords.size(), actualProducedRecords.size());
 
-        List<ConsumerRecord<Integer, String>> actualConsumedRecords = consumer.pollOrTimeout(Duration.ofSeconds(5L), 5L, Collections.singletonList(topicName));
+        List<ConsumerRecord<Integer, String>> actualConsumedRecords = consumer.pollOrTimeout(Duration.ofSeconds(5L), 5L,
+                Collections.singletonList(topicName));
 
         assertEquals(actualProducedRecords.size(), actualConsumedRecords.size());
 
@@ -123,8 +129,7 @@ public class ClientsTest {
                 TestRecord.<Integer, String>builder().key(4).value("4.b").build(),
                 TestRecord.<Integer, String>builder().key(4).value("4.c").build(),
                 TestRecord.<Integer, String>builder().key(4).value("4.d").build(),
-                TestRecord.<Integer, String>builder().key(4).value("4.e").build()
-        );
+                TestRecord.<Integer, String>builder().key(4).value("4.e").build());
     }
 
     private List<TestTopicConfig> createTestTopics() {
