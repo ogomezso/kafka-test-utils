@@ -156,6 +156,8 @@ topicDescriptionList.forEach(description -> {
 adminClient.deleteTopics(Collections.singletonList(topicConfig.getTopicName()));
 ~~~
 
+**Disclaimer: Due known folder permission problems delete topic is not recommended for windows user that are using `EmbeddedSingleNodeCluster`**
+
 ### KafkaTestProducer
 
 This client wraps `KafkaProducer` class; provide a parametrized instance that **must match with the serializers configured on KafkaTestConfig class**.
