@@ -1,4 +1,4 @@
-package es.santander.kafka.test.server;
+package es.santander.libcom.kafka.test.server;
 
 import io.confluent.kafka.schemaregistry.CompatibilityLevel;
 import io.confluent.kafka.schemaregistry.RestApp;

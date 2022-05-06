@@ -1,4 +1,4 @@
-package es.santander.kafka.test.server;
+package es.santander.libcom.kafka.test.server;
 
 import lombok.extern.slf4j.Slf4j;
 

@@ -1,10 +1,11 @@
-package es.santander.kafka.test.clients;
+package es.santander.libcom.kafka.test.clients;
 
-import es.santander.kafka.test.config.KafkaTestConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import es.santander.kafka.test.objects.TestRecord;
+
+import es.santander.libcom.kafka.test.config.KafkaTestConfig;
+import es.santander.libcom.kafka.test.objects.TestRecord;
 
 import java.util.ArrayList;
 import java.util.List;

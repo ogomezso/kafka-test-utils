@@ -1,4 +1,4 @@
-package es.santander.kafka.test.clients;
+package es.santander.libcom.kafka.test.clients;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -17,10 +17,10 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import es.santander.kafka.test.config.KafkaTestConfig;
-import es.santander.kafka.test.objects.TestRecord;
-import es.santander.kafka.test.objects.TestTopicConfig;
-import es.santander.kafka.test.server.EmbeddedSingleNodeCluster;
+import es.santander.libcom.kafka.test.config.KafkaTestConfig;
+import es.santander.libcom.kafka.test.objects.TestRecord;
+import es.santander.libcom.kafka.test.objects.TestTopicConfig;
+import es.santander.libcom.kafka.test.server.EmbeddedSingleNodeCluster;
 
 public class ClientsTest {
 

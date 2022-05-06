@@ -1,8 +1,9 @@
-package es.santander.kafka.test.clients;
+package es.santander.libcom.kafka.test.clients;
 
-import es.santander.kafka.test.config.KafkaTestConfig;
-import es.santander.kafka.test.objects.TestRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
+
+import es.santander.libcom.kafka.test.config.KafkaTestConfig;
+import es.santander.libcom.kafka.test.objects.TestRecord;
 
 import java.io.BufferedReader;
 import java.io.IOException;

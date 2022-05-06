@@ -1,4 +1,4 @@
-package es.santander.kafka.test.config;
+package es.santander.libcom.kafka.test.config;
 
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;

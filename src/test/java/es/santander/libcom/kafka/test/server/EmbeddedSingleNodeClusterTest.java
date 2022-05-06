@@ -1,10 +1,12 @@
-package es.santander.kafka.test.server;
+package es.santander.libcom.kafka.test.server;
 
 import org.junit.AfterClass;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import es.santander.libcom.kafka.test.server.EmbeddedSingleNodeCluster;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
 

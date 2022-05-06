@@ -1,4 +1,4 @@
-package es.santander.kafka.test.objects;
+package es.santander.libcom.kafka.test.objects;
 
 import lombok.Builder;
 import lombok.Value;

@@ -1,4 +1,4 @@
-package es.santander.kafka.test.server;
+package es.santander.libcom.kafka.test.server;
 
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaConfig$;

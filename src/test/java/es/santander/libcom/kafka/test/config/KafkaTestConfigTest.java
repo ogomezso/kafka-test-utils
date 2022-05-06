@@ -1,6 +1,8 @@
-package es.santander.kafka.test.config;
+package es.santander.libcom.kafka.test.config;
 
 import org.junit.Test;
+
+import es.santander.libcom.kafka.test.config.KafkaTestConfig;
 
 import java.io.IOException;
 import java.nio.file.NoSuchFileException;
