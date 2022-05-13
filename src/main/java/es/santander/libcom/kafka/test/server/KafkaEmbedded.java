@@ -45,6 +45,9 @@ public class KafkaEmbedded {
         effectiveConfig.setProperty("zookeeper.connect", zkConn);
         effectiveConfig.setProperty(KafkaConfig$.MODULE$.DefaultReplicationFactorProp(), "1");
         effectiveConfig.setProperty(KafkaConfig$.MODULE$.OffsetsTopicReplicationFactorProp(), "1");
+        effectiveConfig.setProperty(KafkaConfig$.MODULE$.TransactionsTopicReplicationFactorProp(), "1");
+        effectiveConfig.setProperty("confluent.license.topic.replication.factor", "1");
+        effectiveConfig.setProperty("confluent.balancer.topic.replication.factor", "1");
         return effectiveConfig;
     }
 

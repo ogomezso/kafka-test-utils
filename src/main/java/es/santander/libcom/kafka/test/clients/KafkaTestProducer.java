@@ -1,6 +1,5 @@
 package es.santander.libcom.kafka.test.clients;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
-@Slf4j
 public abstract class KafkaTestProducer<K, V> {
 
     private final KafkaProducer<K, V> plainProducer;

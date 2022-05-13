@@ -1,6 +1,5 @@
 package es.santander.libcom.kafka.test.clients;
 
-import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -8,12 +7,10 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import es.santander.libcom.kafka.test.config.KafkaTestConfig;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
-@Slf4j
 public abstract class KafkaTestConsumer<K,V> {
 
     private final KafkaConsumer<K, V> consumer;
@@ -35,7 +32,6 @@ public abstract class KafkaTestConsumer<K,V> {
                 ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(500));
 
                 records.forEach(record -> {
-                    log.debug("Record: {} received at {}", record, LocalDateTime.now());
                     recordsConsumed.add(record);
                 });
                 if (recordsConsumed.size() >= numberOfRecords) isRunning = false;
@@ -46,7 +42,6 @@ public abstract class KafkaTestConsumer<K,V> {
         try {
            return processRecords(pollQueryResults.get(timeout.getSeconds(), TimeUnit.SECONDS));
         } catch (TimeoutException e) {
-            log.debug("Poll cancelled after {} seconds", timeout.getSeconds());
             pollQueryResults.cancel(true);
         } finally {
             executorService.shutdown();
@@ -55,7 +50,7 @@ public abstract class KafkaTestConsumer<K,V> {
     }
 
     public void close(){
-        consumer.unsubscribe();
-        consumer.close(Duration.ofSeconds(3L));
+         consumer.unsubscribe();
+        consumer.close(Duration.ofSeconds(30L));
     }
 }
